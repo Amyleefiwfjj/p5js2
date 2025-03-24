@@ -23,16 +23,16 @@ function setup() {
   targetY = 0.5 * height;    // 화면 높이의 50% 위치
 
   // 버튼 생성
-  paintBtn = createButton('그림 그리러 가기');
+  paintBtn = createButton('색상 반전<br>그림 그리기');
   paintBtn.hide();
   paintBtn.mousePressed(() => {
     window.location.href = 'drawing.html';
   });
 
-  goGalleryBtn = createButton('갤러리 입장');
+  goGalleryBtn = createButton('흑백 팔레트로<br>그림 그리기');
   goGalleryBtn.hide();
   goGalleryBtn.mousePressed(() => {
-    window.location.href = 'gallery.html';
+    window.location.href = 'blackDrawing.html';
   });
 }
 
@@ -48,7 +48,7 @@ function draw() {
   // 페인트 (단순 직사각형)
   noStroke();
   fill(paintColor);
-  rect(width / 2 - 100, 0, 200, rollerY + 100);
+  rect(width / 2 - 150, 0, 300, rollerY + 100);
 
   // 롤러 이미지
   image(rollerImg, width / 2 - rollerImg.width / 2, rollerY);
@@ -57,11 +57,11 @@ function draw() {
   if (rollerY >= targetY) {
     // "그림 그리러 가기" 버튼
     paintBtn.show();
-    paintBtn.position(width / 2 - 70, rollerY - 180);
+    paintBtn.position(width / 2 - 160, rollerY - 270);
 
     // "갤러리 입장" 버튼
     goGalleryBtn.show();
-    goGalleryBtn.position(width / 2 - 70, rollerY - 50);
+    goGalleryBtn.position(width / 2 - 160, rollerY - 110);
   } else {
     paintBtn.hide();
     goGalleryBtn.hide();
