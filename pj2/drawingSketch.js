@@ -76,10 +76,6 @@ const drawingSketch = (p) => {
         userCanvas.background(220);
       });
   
-      // Undo button
-      undoBtn.addEventListener('click', () => {
-        popHistory();
-      });
   
       // Initialize Spectrum color picker
       $(colorPickerElem).spectrum({
