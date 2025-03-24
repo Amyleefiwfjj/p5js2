@@ -3,7 +3,7 @@ let artworks = [];  // Array to hold artwork images
 
 function preload() {
   // Load a background image (replace with your own path)
-  galleryBG = loadImage('galleryBG.jpg');
+  galleryBG = loadImage('assets/galleryBG.png');
   
   // OPTIONAL: preload a few sample artworks
   // artworks.push(loadImage('art1.jpg'));
@@ -15,10 +15,10 @@ function setup() {
   createCanvas(800, 600);
   
   // OPTIONAL: If you want to let the user upload an image, uncomment the line below:
-  // createFileInput(handleFile);
+  createFileInput(handleFile);
   
   // OPTIONAL: If you want to capture the user's drawing from another canvas or from this canvas:
-  //   you could use get() or createGraphics() and push it to artworks[] as well.
+  //  you could use get() or createGraphics() and push it to artworks[] as well.
 }
 
 function draw() {
