@@ -6,10 +6,10 @@ const drawingSketch = (p) => {
     let resultViewBtn;
     let galleryBtn;
     let colorPickerElem;
+    let homeBtn;
     
     // New: Erase & Undo buttons
     let eraseBtn;
-    let undoBtn;
   
     let useInvertedBrush = false;
     let finalInvert = false;
@@ -39,10 +39,9 @@ const drawingSketch = (p) => {
       resultViewBtn   = document.getElementById('resultViewBtn');
       galleryBtn      = document.getElementById('galleryBtn');
       colorPickerElem = document.getElementById('colorPickerInput');
-  
+      homeBtn      = document.getElementById('homeBtn');
       // NEW: Erase & Undo buttons
       eraseBtn        = document.getElementById('eraseBtn');
-      undoBtn         = document.getElementById('undoBtn');
   
       // Set up event listeners
       invertBrushBtn.addEventListener('click', () => {
@@ -66,9 +65,6 @@ const drawingSketch = (p) => {
         resultViewBtn.textContent = finalInvert ? "ON" : "OFF";
       });
   
-      galleryBtn.addEventListener('click', () => {
-        alert("갤러리에 전시하기 버튼이 눌렸습니다!");
-      });
   
       // Erase button
       eraseBtn.addEventListener('click', () => {
