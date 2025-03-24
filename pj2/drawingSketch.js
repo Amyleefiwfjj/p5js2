@@ -4,7 +4,6 @@ const drawingSketch = (p) => {
   let brushTypeBtn;
   let penSliderElem;
   let resultViewBtn;
-  let galleryBtn;
   let colorPickerElem;
   let homeBtn;
   let blackBtn;
@@ -38,7 +37,6 @@ const drawingSketch = (p) => {
     brushTypeBtn = document.getElementById('brushTypeBtn');
     penSliderElem = document.getElementById('penSlider');
     resultViewBtn = document.getElementById('resultViewBtn');
-    galleryBtn = document.getElementById('galleryBtn');
     colorPickerElem = document.getElementById('colorPickerInput');
     homeBtn = document.getElementById('homeBtn');
     // NEW: Erase & Undo buttons

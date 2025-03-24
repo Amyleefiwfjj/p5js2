@@ -57,7 +57,7 @@ function draw() {
   if (rollerY >= targetY) {
     // "그림 그리러 가기" 버튼
     paintBtn.show();
-    paintBtn.position(width / 2 - 160, rollerY - 270);
+    paintBtn.position(width / 2 - 160, rollerY - 300);
 
     // "갤러리 입장" 버튼
     goGalleryBtn.show();

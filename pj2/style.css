@@ -86,7 +86,7 @@ button:hover {
 }
 
 #buttonContainer {
-  margin-top: 330px;
+  margin-top: 430px;
   bottom: 100px;
   display: flex;
   flex-direction: column;
@@ -106,7 +106,7 @@ button:hover {
 .myBigSpectrumPopup {
   transform: scale(1.3) !important;
   transform-origin: left top !important;
-} 
+}
 
 .controlRow button {
   border: 1px solid #333;

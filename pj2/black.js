@@ -1,6 +1,6 @@
 const drawingSketch = (p) => {
   // HTML 요소 변수들
-  let brushTypeBtn, penSliderElem, resultViewBtn, galleryBtn, homeBtn, blackBtn;
+  let brushTypeBtn, penSliderElem, resultViewBtn, homeBtn, blackBtn;
   let chooseColorBtn, eraseBtn;
 
   // 현재 저장된 랜덤 색상 (새로운 stroke는 이 값을 기억)
@@ -24,7 +24,6 @@ const drawingSketch = (p) => {
     brushTypeBtn = document.getElementById('brushTypeBtn');
     penSliderElem = document.getElementById('penSlider');
     resultViewBtn = document.getElementById('resultViewBtn');
-    galleryBtn = document.getElementById('galleryBtn');
     homeBtn = document.getElementById('homeBtn');
     blackBtn = document.getElementById('blackBtn');
     chooseColorBtn = document.getElementById('chooseColorBtn');
