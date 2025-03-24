@@ -44,7 +44,7 @@ const drawingSketch = (p) => {
       useColorMode = !useColorMode;
       if (useColorMode) {
         resultViewBtn.classList.add('active');
-        resultViewBtn.textContent = "원래 색상";
+        resultViewBtn.textContent = "ON";
       } else {
         resultViewBtn.classList.remove('active');
         resultViewBtn.textContent = "OFF";
