@@ -83,51 +83,53 @@ button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-}
 
-#buttonContainer {
-  margin-top: 430px;
-  bottom: 100px;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  /* 버튼 사이 여백 없애기 */
-}
 
-/* Spectrum 피커가 접혀진 상태를 크게 보이게 하는 경우 */
-.myBigSpectrum {
-  transform: scale(1.3) !important;
-  /* 원하는 배율로 조절 */
-  transform-origin: left top !important;
-  /* 확대 기준점 (왼쪽 상단) */
-}
+  #buttonContainer {
+    margin-top: 430px;
+    bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    /* 버튼 사이 여백 없애기 */
+  }
 
-/* 펼쳐진 팝업을 키우려면 containerClassName에 지정한 클래스에 적용 */
-.myBigSpectrumPopup {
-  transform: scale(1.3) !important;
-  transform-origin: left top !important;
-}
+  /* Spectrum 피커가 접혀진 상태를 크게 보이게 하는 경우 */
+  .myBigSpectrum {
+    transform: scale(1.3) !important;
+    /* 원하는 배율로 조절 */
+    transform-origin: left top !important;
+    /* 확대 기준점 (왼쪽 상단) */
+  }
 
-.controlRow button {
-  border: 1px solid #333;
-  background: #fff;
-  color: #333;
-  cursor: pointer;
-  margin-left: auto;
-  /* 버튼 패딩 (여유 공간) */
-  transition: background-color 0.2s;
-}
+  /* 펼쳐진 팝업을 키우려면 containerClassName에 지정한 클래스에 적용 */
+  .myBigSpectrumPopup {
+    transform: scale(1.3) !important;
+    transform-origin: left top !important;
 
-/* 마우스 오버 시 (hover) */
-.controlRow button:hover {
-  background-color: #eee;
-  /* 살짝 밝은 회색 */
-}
+  }
 
-/* 버튼이 "활성화" 상태일 때 (.active 클래스) */
-.controlRow button.active {
-  background-color: #333;
-  /* 어두운 배경 */
-  color: #fff;
-  /* 흰색 글씨 */
-}
+  .controlRow button {
+    border: 1px solid #333;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 6px 12px;
+    /* 버튼 패딩 (여유 공간) */
+    transition: background-color 0.2s;
+  }
+
+  /* 마우스 오버 시 (hover) */
+  .controlRow button:hover {
+    background-color: #eee;
+    /* 살짝 밝은 회색 */
+  }
+
+  /* 버튼이 "활성화" 상태일 때 (.active 클래스) */
+  .controlRow button.active {
+    background-color: #333;
+    /* 어두운 배경 */
+    color: #fff;
+    /* 흰색 글씨 */
+  }
