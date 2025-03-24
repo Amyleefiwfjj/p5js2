@@ -29,8 +29,7 @@ const drawingSketch = (p) => {
     blackBtn = document.getElementById('blackBtn');
     chooseColorBtn = document.getElementById('chooseColorBtn');
     eraseBtn = document.getElementById('eraseBtn');
-
-    // 브러시 타입 토글: 스탬프와 연필 모드 전환
+    brightnessSlider = document.getElementById('brightnessSlider');
     brushTypeBtn.addEventListener('click', () => {
       if (brushType === 'stamp') {
         brushType = 'pencil';
@@ -66,7 +65,7 @@ const drawingSketch = (p) => {
 
     // 저장된 모든 stroke들을 그립니다.
     for (let s of strokes) {
-      s.draw(p, useColorMode, penSliderElem.value);
+      s.draw(p, useColorMode, penSliderElem.value, brightnessSlider.value);
     }
   };
 
@@ -105,9 +104,22 @@ const drawingSketch = (p) => {
     addPoint(x, y, size) {
       this.points.push({ x, y, size });
     }
-    draw(p, useColorMode, penWeight) {
-      // useColorMode가 true이면 stroke의 저장 색상, 아니면 검정색으로 그림
-      let col = useColorMode ? this.color : '#000000';
+    draw(p, useColorMode, penWeight, brightnessVal) {
+      let col;
+      if (useColorMode) {
+        p.push();
+        let rgbCol = p.color(this.color);
+        p.colorMode(p.HSB, 360, 100, 100);
+        let base = p.color(this.color);       // 저장된 stroke 색상 (랜덤 색상)
+        let h = p.hue(rgbCol);
+        let s = p.saturation(rgbCol);
+        let b = p.map(brightnessVal, 0, 255, 0, 100);
+        col = p.color(h, s, b);
+        p.pop();
+      } else {
+        col = p.color(0);
+      }
+
       if (this.brushType === 'pencil') {
         p.stroke(col);
         p.strokeWeight(penWeight);
