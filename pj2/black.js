@@ -11,6 +11,11 @@ const drawingSketch = (p) => {
 
   // New: Erase & Undo buttons
   let eraseBtn;
+  let strokes = [];
+  let currentStroke = null;
+
+  // 결과보기 모드: false면 검정(흑백), true면 stroke에 저장된 랜덤 색상으로 표시
+  let useColorMode = false;
 
   // 현재 저장된 랜덤 색상 (이 값이 결과보기 시 적용됨)
   let currentColor = '#000000';
@@ -39,7 +44,6 @@ const drawingSketch = (p) => {
     resultViewBtn = document.getElementById('resultViewBtn');
     galleryBtn = document.getElementById('galleryBtn');
     homeBtn = document.getElementById('homeBtn');
-    invertBrushBtn = document.getElementById('invertBrushBtn');
     chooseColorBtn = document.getElementById('chooseColorBtn');
     eraseBtn = document.getElementById('eraseBtn');
     blackBtn = document.getElementById('blackBtn');
@@ -57,16 +61,13 @@ const drawingSketch = (p) => {
 
     // 결과보기 버튼: 검정색으로 그려진 userCanvas의 검정 부분을 현재 저장된 랜덤 색상으로 변경
     resultViewBtn.addEventListener('click', () => {
-      applyRandomColor();
-      resultViewBtn.textContent = "원래 색상";
+      useColorMode = !useColorMode;
+      resultViewBtn.textContent = useColorMode ? "원래 색상" : "흑백";
     });
-
     // 지우기 버튼: 현재 상태 저장 후 캔버스 클리어
     eraseBtn.addEventListener('click', () => {
-      pushHistory();
-      userCanvas.background(220);
+      strokes = [];
     });
-
     // 랜덤 색상 저장 버튼: 클릭 시 currentColor에 랜덤 색상 저장
     chooseColorBtn.addEventListener('click', () => {
       currentColor = '#' + Math.floor(Math.random() * 16777215)
@@ -110,7 +111,9 @@ const drawingSketch = (p) => {
   p.draw = function () {
     // 매 프레임마다 배경을 덮어 이전 잔상을 약간 남김
     p.background(255, 255, 255, 10);
-
+    for (let s of strokes) {
+      s.draw(p, useColorMode, penSliderElem.value);
+    }
     // 실제 그리기 색상은 무조건 검정(흑백)으로 고정
     let brushColor = '#000000';
 
@@ -139,19 +142,29 @@ const drawingSketch = (p) => {
 
   p.mousePressed = function () {
     pushHistory();
-    if (brushType === 'pencil') {
-      prevX = p.mouseX;
-      prevY = p.mouseY;
+    if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
+      // 현재 시점의 currentColor를 stroke에 저장 (이 stroke의 "원래 색상")
+      currentStroke = new Stroke(brushType, currentColor);
+      if (brushType === 'stamp') {
+        let size = p.random(10, 100);
+        currentStroke.addPoint(p.mouseX, p.mouseY, size);
+      } else if (brushType === 'pencil') {
+        currentStroke.addPoint(p.mouseX, p.mouseY, null);
+      }
+      strokes.push(currentStroke);
     }
   };
 
   p.mouseDragged = function () {
     let brushColor = '#000000'; // 항상 검정 사용
     if (brushType === 'stamp') {
+      let size = p.random(10, 100);
+      currentStroke.addPoint(p.mouseX, p.mouseY, size);
       for (let i = 0; i < 5; i++) {
         droplets.push(new Droplet(p.mouseX, p.mouseY, brushColor));
       }
     } else if (brushType === 'pencil') {
+      currentStroke.addPoint(p.mouseX, p.mouseY, null);
       userCanvas.stroke(brushColor);
       userCanvas.strokeWeight(penSliderElem.value);
       userCanvas.line(prevX, prevY, p.mouseX, p.mouseY);
@@ -159,7 +172,9 @@ const drawingSketch = (p) => {
       prevY = p.mouseY;
     }
   };
-
+  p.mouseReleased = function () {
+    currentStroke = null;
+  };
   // Droplet 클래스 (스탬프 효과용)
   class Droplet {
     constructor(x, y, baseHex) {
@@ -215,6 +230,37 @@ const drawingSketch = (p) => {
       p.endShape(p.CLOSE);
     }
   }
+  class Stroke {
+    constructor(brushType, color) {
+      this.brushType = brushType;
+      this.color = color; // stroke 생성 시 저장된 랜덤 색상
+      this.points = [];
+    }
+    addPoint(x, y, size) {
+      this.points.push({ x, y, size });
+    }
+    draw(p, useColorMode, penWeight) {
+      // useColorMode가 true이면 저장된 색상으로, 아니면 검정색으로 그립니다.
+      let col = useColorMode ? this.color : '#000000';
+      if (this.brushType === 'pencil') {
+        p.stroke(col);
+        p.strokeWeight(penWeight);
+        p.noFill();
+        p.beginShape();
+        for (let pt of this.points) {
+          p.vertex(pt.x, pt.y);
+        }
+        p.endShape();
+      } else if (this.brushType === 'stamp') {
+        p.noStroke();
+        p.fill(col);
+        for (let pt of this.points) {
+          p.ellipse(pt.x, pt.y, pt.size, pt.size);
+        }
+      }
+    }
+  }
 };
+
 
 new p5(drawingSketch, 'canvasArea');
