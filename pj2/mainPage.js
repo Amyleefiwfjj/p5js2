@@ -1,52 +1,80 @@
-const gallerySketch = (p) => {
-    let galleryBG;      // The background image of the gallery
-    let artworks = [];  // Array to hold artwork images
+let bgImg;       
+let rollerImg;    
+let rollerY;       // 롤러 시작 위치
+let targetY;       // 롤러 최종 위치
+let speed = 5.5;   // 롤러 이동 속도
+let paintBtn;
+let galleryBtn;
+let paintColor;
+
+function preload() {
+  bgImg = loadImage('assets/canvas.png');      
+  rollerImg = loadImage('assets/roller.png');
+}
+
+function setup() {
+  // 전체 화면에 맞는 캔버스 생성
+  createCanvas(windowWidth, windowHeight);
+
+  paintColor = color(164, 120, 100);
+
+  // 화면 비율로 롤러 위치 설정
+  rollerY = -0.2 * height;   // 화면 높이의 -20% 위치(위쪽 밖)
+  targetY = 0.5 * height;    // 화면 높이의 50% 위치
+
+  // 버튼 생성
+  paintBtn = createButton('그림 그리러 가기');
+  paintBtn.hide();
+  paintBtn.mousePressed(() => {
+    window.location.href = 'drawing.html';
+  });
+
+  galleryBtn = createButton('갤러리 입장');
+  galleryBtn.hide();
+  galleryBtn.mousePressed(() => {
+    window.location.href = 'gallery.html';
+  });
+}
+
+function draw() {
+  // 배경
+  image(bgImg, 0, 0, width, height);
+
+  // 롤러가 targetY까지 내려오기
+  if (rollerY < targetY) {
+    rollerY += speed;
+  }
+
+  // 페인트 (단순 직사각형)
+  noStroke();
+  fill(paintColor);
+  rect(width/2 - 100, 0, 200, rollerY + 100);
+
+  // 롤러 이미지
+  image(rollerImg, width/2 - rollerImg.width/2, rollerY);
+
+  // 롤러가 내려온 후 버튼 보이기
+  if (rollerY >= targetY) {
+    // "그림 그리러 가기" 버튼
+    paintBtn.show();
+    paintBtn.position(width/2 - 60, rollerY - 100);
+
+    // "갤러리 입장" 버튼
+    galleryBtn.show();
+    galleryBtn.position(width/2 - 60, rollerY - 30);
+  } else {
+    paintBtn.hide();
+    galleryBtn.hide();
+  }
+}
+
+// 창 크기가 바뀔 때 자동으로 캔버스 사이즈 재조정
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
   
-    p.preload = function() {
-      // Load the gallery background image (use the correct file path/extension)
-      galleryBG = p.loadImage('assets/galleryBG.png');
-    };
-  
-    p.setup = function() {
-      // Create the canvas inside the #galleryContainer div
-      p.createCanvas(800, 600);
-  
-      // If you want to let the user upload an image:
-      // (This creates a file input element on the page.)
-    };
-  
-    p.draw = function() {
-      // Draw the background gallery
-      p.background(255);
-      p.image(galleryBG, 0, 0, p.width, p.height);
-  
-      // Position each artwork in the gallery
-      // For simplicity, place them side by side along a “wall.”
-      let xOffset = 100;   // x-position for first image
-      let yOffset = 150;   // y-position of the "wall"
-      let spacing = 220;   // spacing between images
-  
-      for (let i = 0; i < artworks.length; i++) {
-        let art = artworks[i];
-  
-        // Frame size for each artwork
-        let frameWidth = 200;
-        let frameHeight = 150;
-  
-        // Draw a “frame” (optional)
-        p.stroke(80, 42, 20); // brownish color
-        p.strokeWeight(4);
-        p.fill(255, 230, 200); // light color inside the frame
-        p.rect(xOffset + i * spacing, yOffset, frameWidth, frameHeight);
-  
-        // Draw the artwork inside the frame
-        p.image(art, xOffset + i * spacing, yOffset, frameWidth, frameHeight);
-      }
-    };
-  
-    // Triggered by createFileInput when a file is selected
-  };
-  
-  // Instantiate the sketch and attach it to the #galleryContainer div
-  new p5(gallerySketch, 'galleryContainer');
-  
+  // 롤러/버튼 위치도 창 크기에 맞춰 조정하려면
+  // rollerY, targetY 다시 계산하거나
+  // 비율로 계산하는 로직이 필요할 수 있습니다.
+  // 예: rollerY = -0.2 * height; ...
+  //     targetY = 0.5 * height;
+}
