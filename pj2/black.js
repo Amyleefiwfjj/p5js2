@@ -108,7 +108,7 @@ const drawingSketch = (p) => {
     addPoint(x, y, size) {
       this.points.push({ x, y, size });
     }
-    draw(p, useColorMode, penWeight, brightnessVal) {
+    draw(p, useColorMode, penWeight) {
       let col;
       if (useColorMode) {
         p.push();
@@ -117,8 +117,7 @@ const drawingSketch = (p) => {
         let base = p.color(this.color);       // 저장된 stroke 색상 (랜덤 색상)
         let h = p.hue(rgbCol);
         let s = p.saturation(rgbCol);
-        let b = p.map(brightnessVal, 0, 255, 0, 100);
-        col = p.color(h, s, b);
+        col = p.color(h, s);
         p.pop();
       } else {
         col = p.color(0);
