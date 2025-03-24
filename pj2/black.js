@@ -44,7 +44,13 @@ const drawingSketch = (p) => {
     // 결과보기 버튼: useColorMode 토글 (true이면 각 stroke의 원래 색상, false이면 검정색)
     resultViewBtn.addEventListener('click', () => {
       useColorMode = !useColorMode;
-      resultViewBtn.textContent = useColorMode ? "원래 색상" : "흑백";
+      if (useColorMode) {
+        resultViewBtn.classList.add('active');
+        resultViewBtn.textContent = "ON";
+      } else {
+        resultViewBtn.classList.remove('active');
+        resultViewBtn.textContent = "OFF";
+      }
     });
 
     // Erase 버튼: 모든 stroke 삭제 (캔버스를 초기화)

@@ -115,3 +115,28 @@ button:hover {
   align-items: center;
   /* 버튼 텍스트 중앙 정렬 */
 }
+
+.controlRow button {
+  border: 1px solid #333;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 6px 12px;
+  /* 버튼 패딩 (여유 공간) */
+  transition: background-color 0.2s;
+}
+
+/* 마우스 오버 시 (hover) */
+.controlRow button:hover {
+  background-color: #eee;
+  /* 살짝 밝은 회색 */
+}
+
+/* 버튼이 "활성화" 상태일 때 (.active 클래스) */
+.controlRow button.active {
+  background-color: #333;
+  /* 어두운 배경 */
+  color: #fff;
+  /* 흰색 글씨 */
+}
