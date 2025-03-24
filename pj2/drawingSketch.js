@@ -82,7 +82,7 @@ const drawingSketch = (p) => {
       palette: [
         ["#000000", "#FF0000", "#00FF00", "#0000FF", "#FFFF00"],
         ["#FFFFFF", "#FFA500", "#800080", "#00FFFF", "#FFC0CB"]
-      ],
+      ], replacerClassName: "myBigSpectrum",
       change: function (color) {
         currentColor = color.toHexString();
       }
