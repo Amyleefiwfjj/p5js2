@@ -29,7 +29,6 @@ const drawingSketch = (p) => {
     blackBtn = document.getElementById('blackBtn');
     chooseColorBtn = document.getElementById('chooseColorBtn');
     eraseBtn = document.getElementById('eraseBtn');
-    brightnessSlider = document.getElementById('brightnessSlider');
     brushTypeBtn.addEventListener('click', () => {
       if (brushType === 'stamp') {
         brushType = 'pencil';
@@ -65,7 +64,7 @@ const drawingSketch = (p) => {
 
     // 저장된 모든 stroke들을 그립니다.
     for (let s of strokes) {
-      s.draw(p, useColorMode, penSliderElem.value, brightnessSlider.value);
+      s.draw(p, useColorMode, penSliderElem.value);
     }
   };
 
