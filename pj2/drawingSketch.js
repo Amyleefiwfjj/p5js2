@@ -1,102 +1,143 @@
 const drawingSketch = (p) => {
     let userCanvas;
-    let invertBrushButton;      // 브러시 색상 반전 토글 버튼
-    let brushTypeButton;        // 브러시 종류 전환 버튼 (스탬프 vs 연필)
-    let penSlider;              // 연필 브러시 굵기 조절 슬라이더
-    let useInvertedBrush = false; // 반전 모드 여부 (false이면 기본 색, true이면 반전 색)
-    let brushType = 'stamp';      // 'stamp' 또는 'pencil'
-    let currentColor = '#000000'; // 기본 브러시 색상
+    let invertBrushBtn;
+    let brushTypeBtn;
+    let penSliderElem;
+    let resultViewBtn;
+    let galleryBtn;
+    let colorPickerElem;
+    let eraseBtn;
+    let undoBtn;
+    
+    let useInvertedBrush = false;
+    let finalInvert = false;
+    let brushType = 'stamp'; // 'stamp' or 'pencil'
+    let currentColor = '#000000'; // default color
     let droplets = [];
-    let prevX, prevY;           // 연필 브러시를 위한 이전 마우스 좌표
+    let prevX, prevY;
+    
+    // History array to store snapshots for undo
+    let history = [];
     
     p.setup = function() {
-      p.createCanvas(1300, 800);
+      // Attach the p5 canvas to #canvasArea
+      const canvasParent = document.getElementById('canvasArea');
+      let cnv = p.createCanvas(1300, 800);
+      cnv.parent(canvasParent);
+    
+      // Offscreen buffer for user drawing
       userCanvas = p.createGraphics(1300, 800);
       userCanvas.background(220);
-      
-      // 반전 색상 토글 버튼 (브러시 색상 전용)
-      invertBrushButton = p.createButton('반전 색상으로 그리기: OFF');
-      invertBrushButton.position(10, 870);
-      invertBrushButton.mousePressed(() => {
+    
+      // Grab references to existing HTML elements
+      invertBrushBtn  = document.getElementById('invertBrushBtn');
+      brushTypeBtn    = document.getElementById('brushTypeBtn');
+      penSliderElem   = document.getElementById('penSlider');
+      resultViewBtn   = document.getElementById('resultViewBtn');
+      galleryBtn      = document.getElementById('galleryBtn');
+      colorPickerElem = document.getElementById('colorPickerInput');
+      eraseBtn        = document.getElementById('eraseBtn');
+      undoBtn         = document.getElementById('undoBtn');
+    
+      // Set up event listeners
+      invertBrushBtn.addEventListener('click', () => {
         useInvertedBrush = !useInvertedBrush;
-        invertBrushButton.html(
-          useInvertedBrush ? '반전 색상으로 그리기: ON' : '반전 색상으로 그리기: OFF'
-        );
+        invertBrushBtn.textContent = useInvertedBrush ? "ON" : "OFF";
       });
-      
-      // 브러시 종류 전환 버튼
-      brushTypeButton = p.createButton('스탬프 브러쉬');
-      brushTypeButton.position(250, 870);
-      brushTypeButton.mousePressed(() => {
+    
+      brushTypeBtn.addEventListener('click', () => {
         if (brushType === 'stamp') {
           brushType = 'pencil';
-          brushTypeButton.html('연필 브러쉬');
+          brushTypeBtn.textContent = "연필";
         } else {
           brushType = 'stamp';
-          brushTypeButton.html('스탬프 브러쉬');
+          brushTypeBtn.textContent = "스탬프";
         }
       });
-      
-      // 연필 브러쉬 굵기 조절 슬라이더 (최소 1, 최대 20, 초기값 2)
-      penSlider = p.createSlider(1, 20, 2);
-      penSlider.position(450, 870);
-      
+    
+      resultViewBtn.addEventListener('click', () => {
+        userCanvas.filter(p.INVERT);
+        finalInvert = !finalInvert;
+        resultViewBtn.textContent = finalInvert ? "ON" : "OFF";
+      });
+    
+      galleryBtn.addEventListener('click', () => {
+        alert("갤러리에 전시하기 버튼이 눌렸습니다!");
+      });
+    
+      eraseBtn.addEventListener('click', () => {
+        pushHistory(); // Save current state before clearing
+        userCanvas.background(220);
+      });
+    
+      undoBtn.addEventListener('click', () => {
+        popHistory();
+      });
+    
+      // Initialize Spectrum color picker
+      $(colorPickerElem).spectrum({
+        color: "#000000",
+        showInput: true,
+        preferredFormat: "hex",
+        showPalette: true,
+        palette: [
+          ["#000000", "#FF0000", "#00FF00", "#0000FF", "#FFFF00"],
+          ["#FFFFFF", "#FFA500", "#800080", "#00FFFF", "#FFC0CB"]
+        ],
+        change: function(color) {
+          currentColor = color.toHexString();
+        }
+      });
+    
       p.noiseDetail(4, 0.6);
     };
     
-    // 헥스 문자열을 받아 반전 색상을 계산하는 함수
-    function invertColor(hex) {
-      if (hex.indexOf('#') === 0) {
-        hex = hex.slice(1);
+    // Save a snapshot of the current userCanvas to history
+    function pushHistory() {
+      // Save the entire userCanvas as a p5.Image
+      let snapshot = userCanvas.get();
+      history.push(snapshot);
+      // Limit history length if desired (for example, max 10 snapshots)
+      if (history.length > 10) {
+        history.shift();
       }
-      if (hex.length === 3) {
-        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+    
+    // Restore the last snapshot from history
+    function popHistory() {
+      if (history.length > 0) {
+        let prevState = history.pop();
+        userCanvas.image(prevState, 0, 0);
+      } else {
+        console.log("No more history to undo!");
       }
-      let r = 255 - parseInt(hex.substring(0, 2), 16);
-      let g = 255 - parseInt(hex.substring(2, 4), 16);
-      let b = 255 - parseInt(hex.substring(4, 6), 16);
-      let inverted = '#' + [r, g, b].map(c => {
-        let hexVal = c.toString(16);
-        return hexVal.length === 1 ? '0' + hexVal : hexVal;
-      }).join('');
-      return inverted;
     }
     
     p.draw = function() {
-      // 메인 캔버스 배경 (잔상 효과)
+      // Main canvas background with trailing effect
       p.background(255, 255, 255, 10);
-      
-      // Spectrum 색상 선택기에서 현재 선택된 색상을 읽어옴
-      if (window.jQuery && $("#colorPickerInput").spectrum("get")) {
-        currentColor = $("#colorPickerInput").spectrum("get").toHexString();
+    
+      // Read current color from Spectrum
+      let picked = $("#colorPickerInput").spectrum("get");
+      if (picked) {
+        currentColor = picked.toHexString();
       }
-      
-      // 브러시 색상 결정: 반전 모드에 따라 효과 색상 선택
+    
+      // Determine effective brush color
       let brushColor = useInvertedBrush ? invertColor(currentColor) : currentColor;
-      
-      // userCanvas를 메인 캔버스에 표시
+    
+      // Draw the offscreen userCanvas onto the main canvas
       p.image(userCanvas, 0, 0);
-      
-      // 마우스 드래그 시 각 브러시 방식에 따라 그리기
-      if (p.mouseIsPressed) {
-        if (brushType === 'stamp') {
-          userCanvas.fill(brushColor);
-          userCanvas.noStroke();
-          drawStampBrush();
-        }
+    
+      // In stamp mode, if mouse is pressed, stamp an ellipse
+      if (p.mouseIsPressed && brushType === 'stamp') {
+        userCanvas.fill(brushColor);
+        userCanvas.noStroke();
+        let size = p.random(10, 100);
+        userCanvas.ellipse(p.mouseX, p.mouseY, size, size);
       }
-      
-      updateAndDrawDroplets();
-    };
     
-    // 스탬프 브러시: 무작위 크기의 원으로 찍기
-    function drawStampBrush() {
-      let size = p.random(10, 100);
-      userCanvas.ellipse(p.mouseX, p.mouseY, size, size);
-    }
-    
-    // 드롭렛 업데이트 및 그리기 함수 (스탬프 브러시 모드에서만 사용)
-    function updateAndDrawDroplets() {
+      // Update and draw droplets (for stamp mode)
       if (brushType === 'stamp') {
         for (let i = droplets.length - 1; i >= 0; i--) {
           droplets[i].spread();
@@ -106,31 +147,50 @@ const drawingSketch = (p) => {
           }
         }
       }
-    }
+    };
     
-    // p.mousePressed: for pencil mode, initialize previous mouse position
+    // For pencil mode, save current state and initialize previous mouse position
     p.mousePressed = function() {
+      pushHistory(); // Save state before starting a new stroke
       if (brushType === 'pencil') {
         prevX = p.mouseX;
         prevY = p.mouseY;
       }
     };
     
-    // p.mouseDragged: Different behavior for stamp and pencil brushes.
+    // On drag, either create droplets (stamp) or draw lines (pencil)
     p.mouseDragged = function() {
-      let effectiveColor = useInvertedBrush ? invertColor(currentColor) : currentColor;
+      let brushColor = useInvertedBrush ? invertColor(currentColor) : currentColor;
       if (brushType === 'stamp') {
         for (let i = 0; i < 5; i++) {
-          droplets.push(new Droplet(p.mouseX, p.mouseY, effectiveColor));
+          droplets.push(new Droplet(p.mouseX, p.mouseY, brushColor));
         }
       } else if (brushType === 'pencil') {
-        userCanvas.stroke(effectiveColor);
-        userCanvas.strokeWeight(penSlider.value());
+        userCanvas.stroke(brushColor);
+        userCanvas.strokeWeight(penSliderElem.value);
         userCanvas.line(prevX, prevY, p.mouseX, p.mouseY);
         prevX = p.mouseX;
         prevY = p.mouseY;
       }
     };
+    
+    // Helper: invert a hex color
+    function invertColor(hex) {
+      if (hex.indexOf('#') === 0) {
+        hex = hex.slice(1);
+      }
+      if (hex.length === 3) {
+        hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+      }
+      let r = 255 - parseInt(hex.substring(0, 2), 16);
+      let g = 255 - parseInt(hex.substring(2, 4), 16);
+      let b = 255 - parseInt(hex.substring(4, 6), 16);
+      let inverted = '#' + [r, g, b].map(c => {
+        let val = c.toString(16);
+        return val.length === 1 ? '0' + val : val;
+      }).join('');
+      return inverted;
+    }
     
     // Modified Droplet class accepting a base color parameter.
     class Droplet {
@@ -139,18 +199,17 @@ const drawingSketch = (p) => {
         this.y = y;
         this.noiseOffsetX = p.random(1000);
         this.noiseOffsetY = p.random(1000);
-        this.size = p.random(3, 10);      // Droplet base size
-        this.alpha = 180;                 // Initial alpha
-        this.expansion = p.random(0.5, 1.0); // Faster expansion speed
-        // Use the provided effective color as base
+        this.size = p.random(3, 10);
+        this.alpha = 180;
+        this.expansion = p.random(0.5, 1.0);
         let baseColor = p.color(baseHex);
-        let r = p.red(baseColor);
-        let g = p.green(baseColor);
-        let b = p.blue(baseColor);
+        let rr = p.red(baseColor);
+        let gg = p.green(baseColor);
+        let bb = p.blue(baseColor);
         this.color = [
-          r + p.random(-20, 20),
-          g + p.random(-20, 20),
-          b + p.random(-20, 20),
+          rr + p.random(-20, 20),
+          gg + p.random(-20, 20),
+          bb + p.random(-20, 20),
           this.alpha
         ];
         this.shape = this.createFluidShape();
@@ -179,9 +238,9 @@ const drawingSketch = (p) => {
         for (let i = 0; i < numPoints; i++) {
           let angle = p.map(i, 0, numPoints, 0, p.TWO_PI);
           let radius = this.size * (0.7 + p.noise(i * noiseFactor + p.frameCount * 0.01) * 0.5);
-          let x = p.cos(angle) * radius;
-          let y = p.sin(angle) * radius;
-          points.push([x, y]);
+          let xx = p.cos(angle) * radius;
+          let yy = p.sin(angle) * radius;
+          points.push([xx, yy]);
         }
         return points;
       }
@@ -198,18 +257,5 @@ const drawingSketch = (p) => {
     }
   };
   
-  new p5(drawingSketch, 'drawingContainer');
-  
-  $(document).ready(function() {
-    $("#colorPickerInput").spectrum({
-      color: "#000000",
-      showInput: true,
-      preferredFormat: "hex",
-      showPalette: true,
-      palette: [
-        ["#000000", "#FF0000", "#00FF00", "#0000FF", "#FFFF00"],
-        ["#FFFFFF", "#FFA500", "#800080", "#00FFFF", "#FFC0CB"]
-      ]
-    });
-  });
+  new p5(drawingSketch, 'canvasArea');
   
