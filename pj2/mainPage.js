@@ -1,14 +1,14 @@
-let bgImg;       
-let rollerImg;    
+let bgImg;
+let rollerImg;
 let rollerY;       // 롤러 시작 위치
 let targetY;       // 롤러 최종 위치
 let speed = 5.5;   // 롤러 이동 속도
 let paintBtn;
-let galleryBtn;
+let goGalleryBtn;
 let paintColor;
 
 function preload() {
-  bgImg = loadImage('assets/canvas.png');      
+  bgImg = loadImage('assets/canvas.png');
   rollerImg = loadImage('assets/roller.png');
 }
 
@@ -29,9 +29,9 @@ function setup() {
     window.location.href = 'drawing.html';
   });
 
-  galleryBtn = createButton('갤러리 입장');
-  galleryBtn.hide();
-  galleryBtn.mousePressed(() => {
+  goGalleryBtn = createButton('갤러리 입장');
+  goGalleryBtn.hide();
+  goGalleryBtn.mousePressed(() => {
     window.location.href = 'gallery.html';
   });
 }
@@ -48,33 +48,28 @@ function draw() {
   // 페인트 (단순 직사각형)
   noStroke();
   fill(paintColor);
-  rect(width/2 - 100, 0, 200, rollerY + 100);
+  rect(width / 2 - 100, 0, 200, rollerY + 100);
 
   // 롤러 이미지
-  image(rollerImg, width/2 - rollerImg.width/2, rollerY);
+  image(rollerImg, width / 2 - rollerImg.width / 2, rollerY);
 
   // 롤러가 내려온 후 버튼 보이기
   if (rollerY >= targetY) {
     // "그림 그리러 가기" 버튼
     paintBtn.show();
-    paintBtn.position(width/2 - 60, rollerY - 100);
+    paintBtn.position(width / 2 - 70, rollerY - 180);
 
     // "갤러리 입장" 버튼
-    galleryBtn.show();
-    galleryBtn.position(width/2 - 60, rollerY - 30);
+    goGalleryBtn.show();
+    goGalleryBtn.position(width / 2 - 70, rollerY - 50);
   } else {
     paintBtn.hide();
-    galleryBtn.hide();
+    goGalleryBtn.hide();
   }
 }
 
 // 창 크기가 바뀔 때 자동으로 캔버스 사이즈 재조정
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  
-  // 롤러/버튼 위치도 창 크기에 맞춰 조정하려면
-  // rollerY, targetY 다시 계산하거나
-  // 비율로 계산하는 로직이 필요할 수 있습니다.
-  // 예: rollerY = -0.2 * height; ...
-  //     targetY = 0.5 * height;
+
 }
