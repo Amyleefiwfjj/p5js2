@@ -11,25 +11,13 @@
   font-weight: normal;
   font-style: normal;
 }
-
-/* 여러 요소에 폰트를 적용 */
-h1,
-h2,
-h3 {
+h1,h2,h3 {
   font-family: 'Title', sans-serif;
 }
-
-body,
-p,
-span,
-a,
-href {
+body,p,span,a,href {
   font-family: 'Content', sans-serif;
   font-size: 20px;
-
 }
-
-/* 버튼 기본 스타일 */
 button {
   font-family: 'Content', sans-serif;
   border: none;
@@ -41,13 +29,10 @@ button {
   width: 340px;
   height: 35px;
 }
-
-/* 버튼 호버 시 스타일 */
 button:hover {
   color: rgb(98, 69, 30);
   background-color: transparent;
 }
-
 #invertBrushBtn {
   font-size: 25px;
 }
