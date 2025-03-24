@@ -28,6 +28,8 @@ const drawingSketch = (p) => {
     blackBtn = document.getElementById('blackBtn');
     chooseColorBtn = document.getElementById('chooseColorBtn');
     eraseBtn = document.getElementById('eraseBtn');
+
+    // 브러시 타입 토글: 스탬프와 연필 모드 전환
     brushTypeBtn.addEventListener('click', () => {
       if (brushType === 'stamp') {
         brushType = 'pencil';
@@ -41,13 +43,7 @@ const drawingSketch = (p) => {
     // 결과보기 버튼: useColorMode 토글 (true이면 각 stroke의 원래 색상, false이면 검정색)
     resultViewBtn.addEventListener('click', () => {
       useColorMode = !useColorMode;
-      if (useColorMode) {
-        resultViewBtn.classList.add('active');
-        resultViewBtn.textContent = "ON";
-      } else {
-        resultViewBtn.classList.remove('active');
-        resultViewBtn.textContent = "OFF";
-      }
+      resultViewBtn.textContent = useColorMode ? "원래 색상" : "흑백";
     });
 
     // Erase 버튼: 모든 stroke 삭제 (캔버스를 초기화)
@@ -109,20 +105,8 @@ const drawingSketch = (p) => {
       this.points.push({ x, y, size });
     }
     draw(p, useColorMode, penWeight) {
-      let col;
-      if (useColorMode) {
-        p.push();
-        let rgbCol = p.color(this.color);
-        p.colorMode(p.HSB, 360, 100, 100);
-        let base = p.color(this.color);       // 저장된 stroke 색상 (랜덤 색상)
-        let h = p.hue(rgbCol);
-        let s = p.saturation(rgbCol);
-        col = p.color(h, s);
-        p.pop();
-      } else {
-        col = p.color(0);
-      }
-
+      // useColorMode가 true이면 stroke의 저장 색상, 아니면 검정색으로 그림
+      let col = useColorMode ? this.color : '#000000';
       if (this.brushType === 'pencil') {
         p.stroke(col);
         p.strokeWeight(penWeight);
